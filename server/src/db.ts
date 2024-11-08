@@ -55,7 +55,7 @@ export const getUsersInSameCourse = async (
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(
-      'SELECT caller_id FROM Lecture WHERE course_name = ? AND caller_id != ?',
+      'SELECT caller_id FROM lectures WHERE course_name = ? AND caller_id != ?',
       [courseName, callerId]
     );
     return rows.map((row: any) => row.caller_id);
@@ -64,3 +64,21 @@ export const getUsersInSameCourse = async (
     throw new Error('query error');
   }
 };
+
+export const getUsersInSameTime = async (
+  period: string, 
+  day: string
+): Promise<string[]> => {
+  const conn = await connection;
+
+  try{
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM lectures WHERE period = ? AND day LIKE ?',
+      [period, `%${day}%`]
+    );
+    return rows.map((row:any) => row.caller_id);
+  } catch(error) {
+    console.error(error);
+    throw new Error('query error');
+  }
+}
