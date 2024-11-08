@@ -60,6 +60,14 @@ async function registerCommand(accessToken: string) {
                     actionFunctionName: "tutorial",
                     alfMode: "disable",
                     enabledByDefault: true,
+                },
+                {
+                    name: "list",
+                    scope: "desk",
+                    description: "This is a desk command of view user's Lecture list",
+                    actionFunctionName: "viewLectureList",
+                    alfMode: "disable",
+                    enabledByDefault: true,
                 }
             ]
         }
@@ -123,6 +131,7 @@ function tutorial(wamName: string, callerId: string, params: any) {
     const wamArgs = {
         message: tutorialMsg,
         managerId: callerId,
+        pageName: "save"
     } as { [key: string]: any }
 
     if (params.trigger.attributes) {
@@ -145,4 +154,31 @@ function tutorial(wamName: string, callerId: string, params: any) {
     });
 }
 
-export { requestIssueToken, registerCommand, saveLecture, tutorial, verification };
+function viewLectureList(wamName: string, callerId: string, params: any) {
+    const wamArgs = {
+        message: tutorialMsg,
+        managerId: callerId,
+        pageName: "list"
+    } as { [key: string]: any }
+
+    if (params.trigger.attributes) {
+        defaultWamArgs.forEach(k => {
+            if (k in params.trigger.attributes) {
+                wamArgs[k] = params.trigger.attributes[k]
+            }
+        })
+    }
+
+    return ({
+        result: {
+            type: "wam",
+            attributes: {
+                appId: process.env.APP_ID,
+                name: wamName,
+                wamArgs: wamArgs,
+            }
+        }
+    });
+}
+
+export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial, verification };

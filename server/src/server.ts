@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
-import { requestIssueToken, registerCommand, saveLecture , tutorial, verification } from './util';
+import { requestIssueToken, registerCommand, saveLecture , viewLectureList, tutorial, verification } from './util';
 
 
 require("dotenv").config();
@@ -30,6 +30,8 @@ async function functionHandler(body: any) {
                 body.params.input.classNumber
             );
             return ({result: {}});
+        case 'viewLectureList':
+            return viewLectureList(WAM_NAME, callerId, body.params);
     }
 }
 
