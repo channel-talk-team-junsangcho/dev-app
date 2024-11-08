@@ -12,6 +12,8 @@ const WAM_NAME = 'wam_name';
 async function startServer() {
     const [accessToken, refreshToken, expiresAt]: [string, string, number] = await requestIssueToken(); //토큰 불러오고 검증하기
     await registerCommand(accessToken);
+
+    console.log("accessToken:", accessToken);
 }
 
 async function functionHandler(body: any) {

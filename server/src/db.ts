@@ -38,6 +38,36 @@ export const createLecture = async (
   }
 };
 
+# // Profile 테이블에 학생 정보를 저장
+export const createProfile = async (
+  callerId: string,
+  studentName: string,
+  studentId: string,
+  studentPw: string
+): Promise<void> => {
+
+  console.log(studentName);
+  console.log(studentId);
+  console.log(studentPw);
+  
+  const conn = await connection;
+  try {
+    await conn.beginTransaction();
+
+    // Lecture 테이블에 데이터 삽입
+    const [profileResult] = await conn.query<ResultSetHeader>(
+      'INSERT INTO Profile (caller_id, student_name, student_id, student_pw) VALUES (?, ?, ?, ?)',
+      [callerId, studentName, studentId, studentId]
+    );
+    await conn.commit();
+    console.log('New Profile created successfully');
+  } catch (error) {
+    await conn.rollback();
+    console.error('Error creating new Profile:', error);
+    throw error;
+  }
+};
+
 export const getUsersInSameCourse = async (
   callerId: string, 
   courseName: string
