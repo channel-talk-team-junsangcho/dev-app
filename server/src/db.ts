@@ -68,6 +68,26 @@ export const createProfile = async (
   }
 };
 
+const getCallerName = async (callerId: string): Promise<string> => {
+  const conn = await connection;
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT student_name FROM Profile WHERE caller_id = ?',
+      [callerId]
+    );
+    // 쿼리 결과에서 첫 번째 행의 student_name 필드를 추출하여 반환
+    if (rows.length > 0) {
+      return rows[0].student_name as string; // student_name 필드를 string으로 반환
+    } else {
+      throw new Error('No matching caller_id found');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Query error');
+  }
+};
+
 export const getUsersInSameCourse = async (
   callerId: string, 
   courseName: string

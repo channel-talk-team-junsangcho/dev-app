@@ -11,9 +11,7 @@ const WAM_NAME = 'wam_name';
 
 let ac : string;
 
-let accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkiLCJzdWIiOiJhdXRoX3Rva2VuIiwiZXhwIjoxNzMxMDkyNTMxLCJpYXQiOjE3MzEwOTA3MzE0MzcsInJvbGVJZCI6IjI2ODciLCJzY29wZSI6WyJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiXSwiaWRlbnRpdHkiOiJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiLCJzeW50YXhWZXJzaW9uIjoidjEiLCJuYW1lIjoicm9sZS0yNjg3In0.Su5xdqn4OFDiK-rdJT1KSVK_ffLRghSwZd6B4Fnt854";
-
-let ct : string;
+let accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkiLCJzdWIiOiJhdXRoX3Rva2VuIiwiZXhwIjoxNzMxMDk0OTMyLCJpYXQiOjE3MzEwOTMxMzIwMjksInJvbGVJZCI6IjI2ODciLCJzY29wZSI6WyJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiXSwiaWRlbnRpdHkiOiJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiLCJzeW50YXhWZXJzaW9uIjoidjEiLCJuYW1lIjoicm9sZS0yNjg3In0.BS8hw0YIdvRfgsPeKrPPXYg0ieXfdBhBgxKQf8_2DkA";
 
 async function startServer() {
     //const [accessToken, refreshToken, expiresAt]: [string, string, number] = await requestIssueToken(); //토큰 불러오고 검증하기
