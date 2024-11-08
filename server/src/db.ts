@@ -40,14 +40,15 @@ export const createLecture = async (
 
 export const getUsersInSameCourse = async (
   callerId: string, 
-  courseNumber: string
+  courseName: string
 ): Promise<string[]> => {
   const conn = await connection;
 
   try {
+    console.log(courseName);
     const [rows] = await conn.query<RowDataPacket[]>(
       'SELECT caller_id FROM Lecture WHERE course_name = ? AND caller_id != ?',
-      [courseNumber, callerId]
+      [courseName, callerId]
     );
     return rows.map((row: any) => row.caller_id);
   } catch (error) {

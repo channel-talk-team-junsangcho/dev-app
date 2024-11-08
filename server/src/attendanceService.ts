@@ -3,9 +3,9 @@ import { getUsersInSameCourse, getUsersInSameTime } from './db';
 export async function getSameCourseUser(
     callerId: string, 
     courseName: string
-  ): Promise<string | null> {
+  ): Promise<string> {
     const userIds = await getUsersInSameCourse(callerId, courseName);
-    
+    console.log(userIds);
     return getRandomUser(userIds);
   }
 

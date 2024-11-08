@@ -69,6 +69,14 @@ async function registerCommand(accessToken: string) {
                     actionFunctionName: "viewLectureList",
                     alfMode: "disable",
                     enabledByDefault: true,
+                },
+                {
+                    name: "request",
+                    scope: "desk",
+                    description: "This is a desk command of view user's request Lecture list",
+                    actionFunctionName: "viewRequestLectureList",
+                    alfMode: "disable",
+                    enabledByDefault: true,
                 }
             ]
         }
@@ -86,18 +94,45 @@ async function registerCommand(accessToken: string) {
     }
 }
 
+function viewRequestLectureList(wamName: string, callerId: string, params: any) {
+    const wamArgs = {
+        message: tutorialMsg,
+        managerId: callerId,
+        pageName: "requestList"
+    } as { [key: string]: any }
+
+    if (params.trigger.attributes) {
+        defaultWamArgs.forEach(k => {
+            if (k in params.trigger.attributes) {
+                wamArgs[k] = params.trigger.attributes[k]
+            }
+        })
+    }
+
+    return ({
+        result: {
+            type: "wam",
+            attributes: {
+                appId: process.env.APP_ID,
+                name: wamName,
+                wamArgs: wamArgs,
+            }
+        }
+    });
+}
+
 async function saveLecture(callerId: string, courseName: string, courseNumber: string, classNumber: string) {
     createLecture(callerId, courseName,courseNumber,classNumber);
 
 }
 
-async function findRandomMember(callerId: string, channelId: string, groupId:string, broadcast:boolean, courseName:string, courseNumber: string, rootMessageId: string) {
+async function findRandomMember(callerId: string, channelId: string, groupId:string, broadcast:boolean, courseName:string, rootMessageId: string) {
     let userIdRq='';
     const userId = await getSameCourseUser(callerId, courseName)
     if(userId === null) userIdRq = 'null'
-    else userIdRq = userId;
-    
-    await sendAsBot(channelId,groupId,broadcast,userIdRq,courseNumber,rootMessageId);
+    else userIdRq = userId;   
+
+    await sendAsBot(channelId,groupId,broadcast,userIdRq,courseName,rootMessageId);
 }
 
 async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, userName: string, courseName: string, rootMessageId?: string) {
@@ -205,4 +240,4 @@ const formatMessage = (
         .replace('%s', course); // 두 번째 %s를 course로 대체
 };
 
-export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial,findRandomMember, verification, sendAsBot };
+export { requestIssueToken, registerCommand,viewRequestLectureList,saveLecture, viewLectureList, tutorial,findRandomMember, verification, sendAsBot };

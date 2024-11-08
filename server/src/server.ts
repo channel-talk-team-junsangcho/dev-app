@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 
-import { requestIssueToken, registerCommand, saveLecture , viewLectureList, tutorial, verification, sendAsBot, findRandomMember } from './util';
+import { requestIssueToken, registerCommand, saveLecture , viewLectureList, tutorial, verification, sendAsBot, findRandomMember, viewRequestLectureList } from './util';
 
 require("dotenv").config();
 
@@ -42,8 +42,12 @@ async function functionHandler(body: any) {
             return ({result: {}});
         case 'viewLectureList':
             return viewLectureList(WAM_NAME, callerId, body.params);
+
+        case 'viewRequestLectureList':
+            return viewRequestLectureList(WAM_NAME, callerId, body.params);
+        
         case 'findRandomMember':
-            await findRandomMember(callerId, channelId, body.params.input.groupId, body.params.input.broadcast, body.params.input.courseName,body.params.input.courseNumber,body.params.input.rootMessageId)
+            await findRandomMember(callerId, channelId, body.params.input.groupId, body.params.input.broadcast, body.params.input.courseName, body.params.input.rootMessageId)
     }
 }
 
