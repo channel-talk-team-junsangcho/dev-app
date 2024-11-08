@@ -5,6 +5,7 @@ import { isMobile } from './utils/userAgent'
 import { getWamData } from './utils/wam'
 import Send from './pages/Send'
 import List from './pages/List'
+import RequestList from './pages/RequestList'
 
 
 function App() {
@@ -22,6 +23,8 @@ function App() {
       return <Send />
     else if(pageName === 'list')
       return <List/>
+    else if(pageName === 'requestList')
+      return <RequestList/>
   }
 
   return (

@@ -60,14 +60,13 @@ function List() {
 
   const lectureList = [
     { courseName: '컴퓨터구조', courseCode: '001201' },
-    { courseName: '자료 구조', courseCode: 'CS102' },
-    { courseName: '운영 체제', courseCode: 'CS201' },
+    { courseName: '알고리즘및프로그래밍', courseCode: '001202' },
+    { courseName: '운영체제', courseCode: '001203' },
   ];
 
-  const [indexInfo, setIndexInfo] = useState<string>('');
-  const [courseName, setCourseName] = useState<string>('');
-
-//   const chatTitle = useMemo(() => getWamData('chatTitle') ?? '', [])
+  const [indexInfo, setIndexInfo] = useState<string>('001201');
+  const [courseName, setCourseName] = useState<string>('컴퓨터구조');
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const appId = useMemo(() => getWamData('appId') ?? '', [])
   const channelId = useMemo(() => getWamData('channelId') ?? '', [])
@@ -104,8 +103,7 @@ function List() {
     )
 
   return (
-
-<VStack spacing={16}>
+    <VStack spacing={16}>
       <HStack justify="between">
         <Text
           color="txt-black-darkest"
@@ -121,37 +119,60 @@ function List() {
           onClick={() => close()}
         />
       </HStack>
+      
       <HStack justify="center">
-      <Modal
-          onHide={() => {}}
+        {lectureList.map((lecture, index) => (
+          <StyledListItem key={index}>
+            <div 
+              className="content"
+              onClick={() => {
+                setIndexInfo(lecture.courseCode); 
+                setCourseName(lecture.courseName); 
+                setIsModalOpen(true); // 버튼 클릭 시 모달 열기
+              }}
+              style={{ cursor: 'pointer' }}
+            >
+              {`${lecture.courseName} - ${lecture.courseCode}`}
+            </div>
+          </StyledListItem>
+        ))}
+      </HStack>
+
+      {isModalOpen && (
+        <Modal
+          onHide={() => setIsModalOpen(false)}
           onShow={() => {}}
         >
-        <ModalTrigger>
-        <div>
-{lectureList.map((lecture, index) => (
-    <StyledListItem onClick={() => {setIndexInfo(lecture.courseCode); setCourseName(lecture.courseName); console.log('print: ', index);}}>
-    <div className="content">{`${lecture.courseName} - ${lecture.courseCode}`}</div>
-    </StyledListItem>
-    ))}
-  </div>
-        </ModalTrigger>
-        <ModalContent>
+          <ModalTrigger>
+            <Button text="모달 열기" onClick={() => setIsModalOpen(true)} />
+          </ModalTrigger>
+          <ModalContent>
             <ModalHeader
               subtitle="대리출석"
               title="신청하시겠습니까?"
               titleSize="l"
             />
-            <ModalFooter rightContent={<ButtonGroup><ModalClose><Button colorVariant="monochrome-light" styleVariant="secondary" text="취소"/></ModalClose><ModalClose><Button colorVariant="blue" styleVariant="primary" text="저장" 
-                onClick={async () => {
-                await handleRequest();
-                close()
-            }}/></ModalClose></ButtonGroup>} />
-        </ModalContent>
-              </Modal>
-  </HStack>
-  </VStack>
+            <ModalFooter rightContent={
+              <ButtonGroup>
+                <ModalClose>
+                  <Button colorVariant="monochrome-light" styleVariant="secondary" text="취소" onClick={() => setIsModalOpen(false)} />
+                </ModalClose>
+                <ModalClose>
+                  <Button colorVariant="blue" styleVariant="primary" text="저장" 
+                    onClick={async () => {
+                      await handleRequest();
+                      setIsModalOpen(false); // 모달 닫기
+                      close();
+                    }}
+                  />
+                </ModalClose>
+              </ButtonGroup>
+            } />
+          </ModalContent>
+        </Modal>
+      )}
+    </VStack>
   )
-
 }
 
 export default List

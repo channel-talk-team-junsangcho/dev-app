@@ -11,6 +11,12 @@ const connection = mysql.createConnection({
   database: process.env.DBNAME, // 데이터베이스 이름
 });
 
+
+interface lectureResult {
+  courseName: string, 
+  courseNumber: string
+}
+
 // Lecture와 UserLecture 테이블에 데이터를 저장하는 함수
 export const createLecture = async (
   callerId: string,
@@ -37,6 +43,31 @@ export const createLecture = async (
     throw error;
   }
 };
+
+export const getMyLectureList = async (
+  callerId: string
+) : Promise<lectureResult[]> => {
+  const conn = await connection;
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM Lecture WHERE caller_id = ?',
+      [callerId]
+    );
+    
+    const lectures: lectureResult[] = [];
+    rows.forEach((element) => {
+      const lecture: lectureResult = {
+        courseName: element.course_name,   
+        courseNumber: element.course_number
+      };
+      
+      lectures.push(lecture);
+    });
+
+    return lectures;
+  }
+}
 
 export const getUsersInSameCourse = async (
   callerId: string, 
