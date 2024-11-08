@@ -33,15 +33,10 @@ function Send() {
     setSize(390, 300) 
   }, [])
 
-  const [userId, setUserId] = useState<string>('');
   const [courseName, setCourseName] = useState<string>('');
   const [courseNumber, setCourseNumber] = useState<string>('');
   const [classNumber, setClassNumber] = useState<string>('');
-
-  const handleUserIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUserId(event.target.value);
-  };
-
+  
   const handleCourseNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCourseName(event.target.value);
   };
@@ -94,52 +89,6 @@ function Send() {
         classNumber
       ]
     )
-  // const handleSend = useCallback(
-  //   async (sender: string): Promise<void> => {
-  //     if (chatType === 'group') {
-  //       switch (sender) {
-  //         case 'bot':
-  //           await callFunction(appId, 'sendAsBot', {
-  //             input: {
-  //               groupId: chatId,
-  //               broadcast,
-  //               rootMessageId,
-  //             },
-  //           })
-  //           break
-  //         case 'manager':
-  //           await callNativeFunction('writeGroupMessageAsManager', {
-  //             channelId,
-  //             groupId: chatId,
-  //             rootMessageId,
-  //             broadcast,
-  //             dto: {
-  //               plainText: message,
-  //               managerId,
-  //             },
-  //           })
-  //           break
-  //         default:
-  //           // NOTE: should not reach here
-  //           console.error('Invalid message sender')
-  //       }
-  //     } else if (chatType === 'directChat') {
-  //       // FIXME: Implement
-  //     } else if (chatType === 'userChat') {
-  //       // FIXME: Implement
-  //     }
-  //   },
-  //   [
-  //     appId,
-  //     broadcast,
-  //     channelId,
-  //     chatId,
-  //     chatType,
-  //     managerId,
-  //     message,
-  //     rootMessageId,
-  //   ]
-  // )
 
   return (
     <VStack spacing={16}>
@@ -158,23 +107,6 @@ function Send() {
           onClick={() => close()}
         />
       </HStack>
-      <HStack justify="start">
-      <Box>
-        <Text
-          color="txt-black-darkest"
-          typo="15"
-        >
-          본인 식별 코드를 입력해주세요!
-        </Text>
-      </Box>
-      </HStack>
-      <HStack justify="center">
-      <TextField
-          placeholder="본인 조회 코드 등록"
-          value={userId}
-          onChange={handleUserIdChange}
-        />
-        </HStack>
         <HStack justify="start">
       <Box>
         <Text
