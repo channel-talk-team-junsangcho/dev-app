@@ -11,19 +11,7 @@ interface requestParams {
     day: string
 }
 
-export async function requestProxyAttendance(
-    obj: requestParams
-) {
-    const userId = getAppropriateUser(obj);
-
-    if(userId == null) {
-        handleSendMessageAsBot("", obj.courseName, sendAsBotFailAttendaceMsg);
-    } else {
-        handleSendMessageAsBot("", obj.courseName, sendAsBotProxyAttendanceMsg);
-    }
-}
-
-function getAppropriateUser(
+export async function getAppropriateUser(
     obj: requestParams
 ) {
     var userId = getSameCourseUser(obj.callerId, obj.courseName);

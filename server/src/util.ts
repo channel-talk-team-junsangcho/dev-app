@@ -2,16 +2,23 @@ import axios from 'axios';
 import * as crypto from 'crypto';
 
 import { createLecture } from './db';
+import { getAppropriateUser } from './attendaceService';
 
 require("dotenv").config();
 
 let channelTokenMap = new Map<string, [string, string, number]>();
 
 const tutorialMsg = "This is a test message sent by a manager.";
-const sendAsBotMsg = "%s %s 강의 대리 출석해 주세요~!";
 const botName = "대리 출석 Bot";
 
 const defaultWamArgs = ["rootMessageId", "broadcast", "isPrivate"];
+
+interface requestParams {
+    callerId: string, 
+    courseName: string,
+    period: string,
+    day: string
+}
 
 async function getChannelToken(channelId: string): Promise<[string, string]> {
     const channelToken = channelTokenMap.get(channelId);
@@ -89,9 +96,29 @@ async function saveLecture(courseName: string, courseNumber: string, classNumber
     createLecture(courseName,courseNumber,classNumber)
 }
 
-async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, name: string, course: string, rootMessageId?: string, ) {
-    const plainText = formatMessage(sendAsBotMsg, name, course);
+async function sendAttendanceMsg(
+    obj: requestParams,
+    name: string,
+    channelId: string, groupId: string, broadcast: boolean,
+    rootMessageId?: string 
+) {
+    const sendAsBotProxyAttendanceMsg = "%s %s 강의 대리 출석해 주세요~!";
+    const sendAsBotFailAttendaceMsg = "대리 출석 해 줄 사용자가 없어요...";
 
+    const userId = getAppropriateUser(obj);
+    var plainText;
+
+    if(userId == null) {
+        plainText = formatMessage(sendAsBotFailAttendaceMsg, name, obj.courseName);
+    } else {
+        plainText = formatMessage(sendAsBotProxyAttendanceMsg,
+            name, obj.courseName);
+    }
+
+    sendAsBot(channelId, groupId, broadcast, plainText, rootMessageId);
+}
+
+async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, plainText: string, rootMessageId?: string, ) {
     const body = {
         method: "writeGroupMessage",
         params: {
