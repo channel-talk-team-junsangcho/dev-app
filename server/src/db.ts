@@ -38,7 +38,7 @@ export const createLecture = async (
   }
 };
 
-# // Profile 테이블에 학생 정보를 저장
+// Profile 테이블에 학생 정보를 저장
 export const createProfile = async (
   callerId: string,
   studentName: string,

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as crypto from 'crypto';
 
-import { createLecture } from './db';
+import { createLecture, createProfile } from './db';
 
 require("dotenv").config();
 
@@ -68,6 +68,14 @@ async function registerCommand(accessToken: string) {
                     actionFunctionName: "viewLectureList",
                     alfMode: "disable",
                     enabledByDefault: true,
+                },
+                {
+                    name: "saveProfile",
+                    scope: "desk",
+                    description: "This is a desk command of view user's Lecture list",
+                    actionFunctionName: "saveProfilePage",
+                    alfMode: "disable",
+                    enabledByDefault: true,
                 }
             ]
         }
@@ -85,8 +93,41 @@ async function registerCommand(accessToken: string) {
     }
 }
 
+// send.tsx 프론트에서 호출
 async function saveLecture(callerId: string, courseName: string, courseNumber: string, classNumber: string) {
     createLecture(callerId, courseName,courseNumber,classNumber)
+}
+
+function saveProfilePage(wamName: string, callerId: string, params: any) {
+    const wamArgs = {
+        message: tutorialMsg,
+        managerId: callerId,
+        pageName: "saveProfile"
+    } as { [key: string]: any }
+
+    if (params.trigger.attributes) {
+        defaultWamArgs.forEach(k => {
+            if (k in params.trigger.attributes) {
+                wamArgs[k] = params.trigger.attributes[k]
+            }
+        })
+    }
+
+    return ({
+        result: {
+            type: "wam",
+            attributes: {
+                appId: process.env.APP_ID,
+                name: wamName,
+                wamArgs: wamArgs,
+            }
+        }
+    });
+}
+
+// saveProfile.tsx 프론트에서 호출
+async function saveProfile(callerId: string, studentName: string, studentId: string, studentPw: string) {
+    createProfile(callerId, studentName, studentId, studentPw)
 }
 
 async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, name: string, course: string, rootMessageId?: string, ) {
@@ -194,4 +235,4 @@ const formatMessage = (
         .replace('%s', course); // 두 번째 %s를 course로 대체
 };
 
-export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial, verification, sendAsBot };
+export { requestIssueToken, registerCommand, saveLecture, saveProfile, saveProfilePage, viewLectureList, tutorial, verification, sendAsBot };

@@ -28,7 +28,7 @@ import {
 } from '../../utils/wam'
 import * as Styled from './SaveProfile.styled'
 
-function Send() {
+function SaveProfile() {
   useEffect(() => { //화면사이즈 설정
     setSize(390, 300) 
   }, [])
@@ -64,14 +64,14 @@ function Send() {
       async (): Promise<void> => {
         console.log(studentName, studentId, studentPw);
         
-        await callFunction(appId, 'saveLecture', {
+        await callFunction(appId, 'saveProfile', {
           input: {
             groupId: chatId,
             broadcast,
             rootMessageId,
-            courseName: studentName,
-            courseNumber: studentId,
-            classNumber: studentPw
+            studentName: studentName,
+            studentId: studentId,
+            studentPw: studentPw
           }
         })
       },
@@ -175,4 +175,4 @@ function Send() {
   )
 }
 
-export default Send
+export default SaveProfile
