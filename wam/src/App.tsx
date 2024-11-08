@@ -4,10 +4,8 @@ import { AppProvider, type ThemeName } from '@channel.io/bezier-react'
 import { isMobile } from './utils/userAgent'
 import { getWamData } from './utils/wam'
 import Send from './pages/Send'
+import List from './pages/List'
 
-function Help() {
-  return <div>헬프</div>
-}
 
 function App() {
   const [theme, setTheme] = useState<ThemeName>('light')
@@ -17,13 +15,19 @@ function App() {
     setTheme(appearance === 'dark' ? 'dark' : 'light')
   }, [])
 
-  const pageName = getWamData('pageName')
-
+  
+  function Page() {
+    const pageName = getWamData('pageName');
+    if(pageName === 'save')
+      return <Send />
+    else if(pageName === 'list')
+      return <List/>
+  }
 
   return (
     <AppProvider themeName={theme}>
       <div style={{ padding: isMobile() ? '16px' : '0 24px 24px 24px' }}>
-        {pageName === 'save' ? <Send /> : <Help/>}
+        <Page/>
       </div>
     </AppProvider>
   )
