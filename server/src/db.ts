@@ -1,4 +1,4 @@
-import mysql, { ResultSetHeader } from 'mysql2/promise';
+import mysql, { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 
 require("dotenv").config();
 
@@ -44,5 +44,23 @@ export const createLecture = async (
     await conn.rollback();
     console.error('Error creating records:', error);
     throw error;
+  }
+};
+
+export const getUsersInSameCourse = async (
+  callerId: string, 
+  courseName: string
+): Promise<string[]> => {
+  const conn = await connection;
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT caller_id FROM Lecture WHERE course_name = ? AND caller_id != ?',
+      [courseName, callerId]
+    );
+    return rows.map((row: any) => row.caller_id);
+  } catch (error) {
+    console.error(error);
+    throw new Error('query error');
   }
 };
