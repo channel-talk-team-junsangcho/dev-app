@@ -34,8 +34,9 @@ async function functionHandler(body: any) {
                 channelId,
                 body.params.input.groupId,
                 body.params.input.broadcast,
+                
                 body.params.input.name,
-                body.params.input.course,
+                body.params.input.courseName,
                 body.params.input.rootMessageId
             );
             return ({result: {}});

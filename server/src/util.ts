@@ -91,6 +91,7 @@ async function saveLecture(courseName: string, courseNumber: string, classNumber
 
 async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, name: string, course: string, rootMessageId?: string, ) {
     const plainText = formatMessage(sendAsBotMsg, name, course);
+
     const body = {
         method: "writeGroupMessage",
         params: {
@@ -99,7 +100,7 @@ async function sendAsBot(channelId: string, groupId: string, broadcast: boolean,
             rootMessageId: rootMessageId,
             broadcast: broadcast,
             dto: {
-                plainText: sendAsBotMsg,
+                plainText: plainText,
                 botName: botName
             }
         }
@@ -180,8 +181,14 @@ function tutorial(wamName: string, callerId: string, params: any) {
     });
 }
 
-const formatMessage = (template, ...values) => {
-    return template.replace(/%s/g, () => values.shift());
+const formatMessage = (
+    template: string, 
+    name: string,
+    course: string
+) => {
+    return template
+        .replace('%s', name) // 첫 번째 %s를 name으로 대체
+        .replace('%s', course); // 두 번째 %s를 course로 대체
 };
 
 export { requestIssueToken, registerCommand, saveLecture, tutorial, verification, sendAsBot };
