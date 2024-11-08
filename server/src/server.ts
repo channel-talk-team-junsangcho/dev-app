@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
-import { requestIssueToken, registerCommand, saveLecture , tutorial, verification } from './util';
+import { requestIssueToken, registerCommand, saveLecture , tutorial, verification, sendAsBot } from './util';
 
 
 require("dotenv").config();
@@ -27,6 +27,16 @@ async function functionHandler(body: any) {
                 body.params.input.courseName,
                 body.params.input.courseNumber,
                 body.params.input.classNumber
+            );
+            return ({result: {}});
+        case 'sendAsBot':
+            await sendAsBot(
+                channelId,
+                body.params.input.groupId,
+                body.params.input.broadcast,
+                body.params.input.name,
+                body.params.input.course,
+                body.params.input.rootMessageId
             );
             return ({result: {}});
     }

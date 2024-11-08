@@ -8,8 +8,8 @@ require("dotenv").config();
 let channelTokenMap = new Map<string, [string, string, number]>();
 
 const tutorialMsg = "This is a test message sent by a manager.";
-const sendAsBotMsg = "This is a test message sent by a bot.";
-const botName = "Bot";
+const sendAsBotMsg = "%s %s 강의 대리 출석해 주세요~!";
+const botName = "대리 출석 Bot";
 
 const defaultWamArgs = ["rootMessageId", "broadcast", "isPrivate"];
 
@@ -89,7 +89,8 @@ async function saveLecture(courseName: string, courseNumber: string, classNumber
     createLecture(courseName,courseNumber,classNumber)
 }
 
-async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, rootMessageId?: string) {
+async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, name: string, course: string, rootMessageId?: string, ) {
+    const plainText = formatMessage(sendAsBotMsg, name, course);
     const body = {
         method: "writeGroupMessage",
         params: {
@@ -179,4 +180,8 @@ function tutorial(wamName: string, callerId: string, params: any) {
     });
 }
 
-export { requestIssueToken, registerCommand, saveLecture, tutorial, verification };
+const formatMessage = (template, ...values) => {
+    return template.replace(/%s/g, () => values.shift());
+};
+
+export { requestIssueToken, registerCommand, saveLecture, tutorial, verification, sendAsBot };
