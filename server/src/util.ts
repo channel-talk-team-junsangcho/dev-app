@@ -8,8 +8,8 @@ require("dotenv").config();
 let channelTokenMap = new Map<string, [string, string, number]>();
 
 const tutorialMsg = "This is a test message sent by a manager.";
-const sendAsBotMsg = "This is a test message sent by a bot.";
-const botName = "Bot";
+const sendAsBotMsg = "%s %s 강의 대리 출석해 주세요~!";
+const botName = "대리 출석 Bot";
 
 const defaultWamArgs = ["rootMessageId", "broadcast", "isPrivate"];
 
@@ -89,7 +89,9 @@ async function saveLecture(callerId: string, courseName: string, courseNumber: s
     createLecture(callerId, courseName,courseNumber,classNumber)
 }
 
-async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, rootMessageId?: string) {
+async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, name: string, course: string, rootMessageId?: string, ) {
+    const plainText = formatMessage(sendAsBotMsg, name, course);
+
     const body = {
         method: "writeGroupMessage",
         params: {
@@ -98,7 +100,7 @@ async function sendAsBot(channelId: string, groupId: string, broadcast: boolean,
             rootMessageId: rootMessageId,
             broadcast: broadcast,
             dto: {
-                plainText: sendAsBotMsg,
+                plainText: plainText,
                 botName: botName
             }
         }
@@ -181,4 +183,15 @@ function viewLectureList(wamName: string, callerId: string, params: any) {
     });
 }
 
-export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial, verification };
+
+const formatMessage = (
+    template: string, 
+    name: string,
+    course: string
+) => {
+    return template
+        .replace('%s', name) // 첫 번째 %s를 name으로 대체
+        .replace('%s', course); // 두 번째 %s를 course로 대체
+};
+
+export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial, verification, sendAsBot };
