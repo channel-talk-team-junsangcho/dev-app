@@ -1,7 +1,8 @@
 import axios from 'axios';
 import * as crypto from 'crypto';
 
-import { createLecture } from './db';
+import { createLecture, getUsersInSameCourse} from './db';
+import {getSameCourseUser} from './attendanceService'
 
 require("dotenv").config();
 
@@ -86,11 +87,21 @@ async function registerCommand(accessToken: string) {
 }
 
 async function saveLecture(callerId: string, courseName: string, courseNumber: string, classNumber: string) {
-    createLecture(callerId, courseName,courseNumber,classNumber)
+    createLecture(callerId, courseName,courseNumber,classNumber);
+
 }
 
-async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, name: string, course: string, rootMessageId?: string, ) {
-    const plainText = formatMessage(sendAsBotMsg, name, course);
+async function findRandomMember(callerId: string, channelId: string, groupId:string, broadcast:boolean, courseName:string, courseNumber: string, rootMessageId: string) {
+    let userIdRq='';
+    const userId = await getSameCourseUser(callerId, courseName)
+    if(userId === null) userIdRq = 'null'
+    else userIdRq = userId;
+    
+    await sendAsBot(channelId,groupId,broadcast,userIdRq,courseNumber,rootMessageId);
+}
+
+async function sendAsBot(channelId: string, groupId: string, broadcast: boolean, userName: string, courseName: string, rootMessageId?: string) {
+    const plainText = formatMessage(sendAsBotMsg, userName, courseName);
 
     const body = {
         method: "writeGroupMessage",
@@ -194,4 +205,4 @@ const formatMessage = (
         .replace('%s', course); // 두 번째 %s를 course로 대체
 };
 
-export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial, verification, sendAsBot };
+export { requestIssueToken, registerCommand, saveLecture, viewLectureList, tutorial,findRandomMember, verification, sendAsBot };

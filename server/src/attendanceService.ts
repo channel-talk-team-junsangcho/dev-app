@@ -20,8 +20,8 @@ export async function getSameCourseUser(
 
 function getRandomUser(
     userIds: string[],
-): string | null  {
-    if(userIds.length == 0) return null
+): string  {
+    if(userIds.length == 0) return 'null'
     if(userIds.length == 1) return userIds[0];
 
     const randomIndex = Math.floor(Math.random() * userIds.length);
