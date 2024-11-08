@@ -5,10 +5,6 @@ import { isMobile } from './utils/userAgent'
 import { getWamData } from './utils/wam'
 import Send from './pages/Send'
 
-function Help() {
-  return <div>헬프</div>
-}
-
 function App() {
   const [theme, setTheme] = useState<ThemeName>('light')
 
@@ -23,7 +19,7 @@ function App() {
   return (
     <AppProvider themeName={theme}>
       <div style={{ padding: isMobile() ? '16px' : '0 24px 24px 24px' }}>
-        {pageName === 'save' ? <Send /> : <Help/>}
+        {pageName === 'save' ? <Send /> : null}
       </div>
     </AppProvider>
   )

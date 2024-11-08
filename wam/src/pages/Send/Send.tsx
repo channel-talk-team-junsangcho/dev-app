@@ -13,15 +13,12 @@ import {
   ButtonGroup,
   ModalClose,
   Box,
-  // ButtonGroup,
-  // Checkbox,
   TextField,
 } from '@channel.io/bezier-react'
 import { CancelIcon, SendIcon } from '@channel.io/bezier-icons'
 
 import {
   callFunction,
-  // callNativeFunction,
   close,
   getWamData,
   setSize,
