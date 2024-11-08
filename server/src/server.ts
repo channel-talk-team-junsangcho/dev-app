@@ -24,6 +24,7 @@ async function functionHandler(body: any) {
             return tutorial(WAM_NAME, callerId, body.params);
         case 'saveLecture':
             await saveLecture(
+                callerId,
                 body.params.input.courseName,
                 body.params.input.courseNumber,
                 body.params.input.classNumber
