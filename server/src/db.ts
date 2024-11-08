@@ -1,6 +1,12 @@
 import mysql, { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
+import { saveLecture } from './util';
 
 require("dotenv").config();
+
+interface lectureResult {
+  courseName: string, 
+  courseNumber: string
+}
 
 // MySQL 연결 설정
 const connection = mysql.createConnection({
@@ -55,7 +61,7 @@ export const getUsersInSameCourse = async (
 
   try {
     const [rows] = await conn.query<RowDataPacket[]>(
-      'SELECT caller_id FROM lectures WHERE course_name = ? AND caller_id != ?',
+      'SELECT caller_id FROM Lectures WHERE course_name = ? AND caller_id != ?',
       [courseName, callerId]
     );
     return rows.map((row: any) => row.caller_id);
@@ -73,12 +79,37 @@ export const getUsersInSameTime = async (
 
   try{
     const [rows] = await conn.query<RowDataPacket[]>(
-      'SELECT * FROM lectures WHERE period = ? AND day LIKE ?',
+      'SELECT * FROM Lecture WHERE period = ? AND day LIKE ?',
       [period, `%${day}%`]
     );
     return rows.map((row:any) => row.caller_id);
   } catch(error) {
     console.error(error);
     throw new Error('query error');
+  }
+}
+
+export const getMyLectureList = async (
+  callerId: string
+) : Promise<lectureResult[]> => {
+  const conn = await connection;
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT * FROM Lecture WHERE caller_id = ?',
+      [callerId]
+    );
+    
+    const lectures: lectureResult[] = [];
+    rows.forEach((element) => {
+      const lecture: lectureResult = {
+        courseName: element.course_name,   
+        courseNumber: element.course_number
+      };
+      
+      lectures.push(lecture);
+    });
+
+    return lectures;
   }
 }
