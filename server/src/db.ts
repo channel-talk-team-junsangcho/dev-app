@@ -13,10 +13,10 @@ const connection = mysql.createConnection({
 
 // Lecture와 UserLecture 테이블에 데이터를 저장하는 함수
 export const createLecture = async (
+  callerId: string,
   courseName: string,
   courseNumber: string,
   classNumber: string
-  // userId: number
 ): Promise<void> => {
 
   console.log(courseName);
@@ -26,18 +26,9 @@ export const createLecture = async (
 
     // Lecture 테이블에 데이터 삽입
     const [lectureResult] = await conn.query<ResultSetHeader>(
-      'INSERT INTO Lecture (course_name, course_number, class_number) VALUES (?, ?, ?)',
-      [courseName, courseNumber, classNumber]
+      'INSERT INTO Lecture (caller_id, course_name, course_number, class_number) VALUES (?, ?, ?, ?)',
+      [callerId, courseName, courseNumber, classNumber]
     );
-
-    // const lectureId = lectureResult.insertId;
-
-    // // UserLecture 테이블에 데이터 삽입
-    // await conn.query(
-    //   'INSERT INTO UserLecture (user_id, lecture_id) VALUES (?, ?)',
-    //   [userId, lectureId]
-    // );
-
     await conn.commit();
     console.log('Lecture and UserLecture records created successfully');
   } catch (error) {

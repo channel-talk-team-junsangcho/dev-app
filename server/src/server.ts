@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
-import { requestIssueToken, registerCommand, saveLecture , tutorial, verification, sendAsBot } from './util';
 
+import { requestIssueToken, registerCommand, saveLecture , viewLectureList, tutorial, verification, sendAsBot } from './util';
 
 require("dotenv").config();
 
@@ -24,6 +24,7 @@ async function functionHandler(body: any) {
             return tutorial(WAM_NAME, callerId, body.params);
         case 'saveLecture':
             await saveLecture(
+                callerId,
                 body.params.input.courseName,
                 body.params.input.courseNumber,
                 body.params.input.classNumber
@@ -34,12 +35,13 @@ async function functionHandler(body: any) {
                 channelId,
                 body.params.input.groupId,
                 body.params.input.broadcast,
-                
                 body.params.input.name,
                 body.params.input.courseName,
                 body.params.input.rootMessageId
             );
             return ({result: {}});
+        case 'viewLectureList':
+            return viewLectureList(WAM_NAME, callerId, body.params);
     }
 }
 
