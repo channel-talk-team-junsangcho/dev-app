@@ -47,6 +47,32 @@ async function requestIssueToken(channelId?: string) : Promise<[string, string, 
     return [accessToken, refreshToken, expiresAt];
 }
 
+async function getNameByNativeFunction(accessToken: string, channelId:string, callerId:string) {
+    const body = {
+        method: "getManager",
+        params : {
+            "channelId": channelId,
+            "managerId": callerId
+        }
+    }
+
+    const headers = {
+        'x-access-token': accessToken,
+        'Content-Type': 'application/json'
+    };
+
+    const response = await axios.put(process.env.APPSTORE_URL ?? '', body, { headers });
+
+    if (response.data.error != null) {
+        console.log(response)
+        console.log(response.data.error);
+        throw new Error("getManagerNameByNativeFunction Error");
+    }
+
+    const name = response.data.result.manager.name;
+    return name;
+}
+
 async function registerCommand(accessToken: string) {
     const body = {
         method: "registerCommands",
@@ -89,8 +115,11 @@ async function registerCommand(accessToken: string) {
     const response = await axios.put(process.env.APPSTORE_URL ?? '', body, { headers });
 
     if (response.data.error != null) {
-        throw new Error("register command error");
+        console.log(response.data.error);
+        throw new Error("Register Command Error");
     }
+
+    console.log("Register Command Success");
 }
 
 // send.tsx 프론트에서 호출
@@ -98,6 +127,7 @@ async function saveLecture(callerId: string, courseName: string, courseNumber: s
     createLecture(callerId, courseName,courseNumber,classNumber)
 }
 
+// wam 객체로 넘겨주는 함수
 function saveProfilePage(wamName: string, callerId: string, params: any) {
     const wamArgs = {
         message: tutorialMsg,
@@ -125,8 +155,10 @@ function saveProfilePage(wamName: string, callerId: string, params: any) {
     });
 }
 
-// saveProfile.tsx 프론트에서 호출
-async function saveProfile(callerId: string, studentName: string, studentId: string, studentPw: string) {
+// saveProfile.tsx 프론트 -> server FunctionHandler -> 갔다 여기 오는거임
+async function saveProfile(callerId: string, name: string, studentName: string, studentId: string, studentPw: string) {
+    console.log("nativefunction으로 불러와진 거: ", name);
+
     createProfile(callerId, studentName, studentId, studentPw)
 }
 
@@ -235,4 +267,4 @@ const formatMessage = (
         .replace('%s', course); // 두 번째 %s를 course로 대체
 };
 
-export { requestIssueToken, registerCommand, saveLecture, saveProfile, saveProfilePage, viewLectureList, tutorial, verification, sendAsBot };
+export { getChannelToken, requestIssueToken, registerCommand, saveLecture, saveProfile, getNameByNativeFunction, saveProfilePage, viewLectureList, tutorial, verification, sendAsBot };

@@ -21,7 +21,7 @@ import { CancelIcon, SendIcon } from '@channel.io/bezier-icons'
 
 import {
   callFunction,
-  // callNativeFunction,
+  callNativeFunction,
   close,
   getWamData,
   setSize,
@@ -66,6 +66,7 @@ function SaveProfile() {
         
         await callFunction(appId, 'saveProfile', {
           input: {
+            name : await callNativeFunction("getUser", {"channelId" : channelId, "userId": managerId}),
             groupId: chatId,
             broadcast,
             rootMessageId,

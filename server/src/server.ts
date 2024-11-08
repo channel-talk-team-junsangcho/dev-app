@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
 
-import { requestIssueToken, registerCommand, saveLecture, saveProfile , viewLectureList, saveProfilePage,tutorial, verification, sendAsBot } from './util';
+import { getChannelToken, requestIssueToken, registerCommand, saveLecture, saveProfile, getNameByNativeFunction, viewLectureList, saveProfilePage,tutorial, verification, sendAsBot } from './util';
 
 require("dotenv").config();
 
@@ -9,12 +9,17 @@ const app = express();
 
 const WAM_NAME = 'wam_name';
 
-const token = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkiLCJzdWIiOiJhdXRoX3Rva2VuIiwiZXhwIjoxNzMxMDgwMzk0LCJpYXQiOjE3MzEwNzg1OTQ2MjUsInJvbGVJZCI6IjI2ODciLCJzY29wZSI6WyJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiXSwiaWRlbnRpdHkiOiJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiLCJzeW50YXhWZXJzaW9uIjoidjEiLCJuYW1lIjoicm9sZS0yNjg3In0.Gp-BMwquRR7pwJiCuQ6fuugvI4_NpSZSM86bVGa1lkk";
-async function startServer() {
-    const [accessToken, refreshToken, expiresAt]: [string, string, number] = await requestIssueToken(); //토큰 불러오고 검증하기
-    await registerCommand(accessToken);
+let ac : string;
 
-    //console.log("accessToken:", accessToken);
+let accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJhcGkiLCJzdWIiOiJhdXRoX3Rva2VuIiwiZXhwIjoxNzMxMDkyNTMxLCJpYXQiOjE3MzEwOTA3MzE0MzcsInJvbGVJZCI6IjI2ODciLCJzY29wZSI6WyJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiXSwiaWRlbnRpdHkiOiJhcHAtNjcyNDVhNTFlZGE1NzQ4MDdiNDEiLCJzeW50YXhWZXJzaW9uIjoidjEiLCJuYW1lIjoicm9sZS0yNjg3In0.Su5xdqn4OFDiK-rdJT1KSVK_ffLRghSwZd6B4Fnt854";
+
+let ct : string;
+
+async function startServer() {
+    //const [accessToken, refreshToken, expiresAt]: [string, string, number] = await requestIssueToken(); //토큰 불러오고 검증하기
+    await registerCommand(accessToken);
+    ac = accessToken;
+    console.log("accessToken = ", ac);
 }
 
 async function functionHandler(body: any) {
@@ -34,12 +39,21 @@ async function functionHandler(body: any) {
             );
             return ({result: {}});
 
+        // WAM으로 보내는거
         case 'saveProfilePage':
                 return saveProfilePage(WAM_NAME, callerId, body.params);
-                
+        // WAM에서 호출하는거
         case 'saveProfile' :
+            
+            // const name = "채우기"
+            const returnValues = await getChannelToken(channelId);
+            const channelToken = returnValues[0];
+            const name = await getNameByNativeFunction(channelToken, channelId, callerId);
+            console.log("getnamebynativefunction : ", name);
+
             await saveProfile(
                 callerId,
+                name,
                 body.params.input.studentName,
                 body.params.input.studentId,
                 body.params.input.studentPw
@@ -60,6 +74,7 @@ async function functionHandler(body: any) {
     }
 }
 
+// z
 async function server() {
     try {
         await startServer(); //1. server 초기 설정
