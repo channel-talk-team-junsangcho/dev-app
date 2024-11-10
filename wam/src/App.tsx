@@ -6,6 +6,7 @@ import { getWamData } from './utils/wam'
 import Send from './pages/Send'
 import List from './pages/List'
 import RequestList from './pages/RequestList'
+import SaveProfile from './pages/SaveProfile'
 
 
 function App() {
@@ -25,6 +26,8 @@ function App() {
       return <List/>
     else if(pageName === 'requestList')
       return <RequestList/>
+    else if(pageName === 'saveProfile')
+      return <SaveProfile/>
   }
 
   return (

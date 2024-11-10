@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo,useCallback } from 'react'
 import {
   Button,
   HStack,
@@ -10,8 +10,10 @@ import { CancelIcon, } from '@channel.io/bezier-icons'
 
 
 import {
+  callFunction,
     close,
     setSize,
+    getWamData
 } from '../../utils/wam'
 import './RequestList.styled'
 
@@ -21,8 +23,20 @@ function RequestList() {
     setSize(500, 300) 
   }, [])
 
+  // const chatTitle = useMemo(() => getWamData('chatTitle') ?? '', [])
+
+const appId = useMemo(() => getWamData('appId') ?? '', [])
+const channelId = useMemo(() => getWamData('channelId') ?? '', [])
+const managerId = useMemo(() => getWamData('managerId') ?? '', [])
+const message = useMemo(() => getWamData('message') ?? '', [])
+const chatId = useMemo(() => getWamData('chatId') ?? '', [])
+const chatType = useMemo(() => getWamData('chatType') ?? '', [])
+const broadcast = useMemo(() => Boolean(getWamData('broadcast') ?? false), [])
+const rootMessageId = useMemo(() => getWamData('rootMessageId'), [])
+
+
   const [lectureList, setLectureList] = useState([
-    { callerName:'신혜연', courseName: '컴퓨터구조', id:'1234',password:'1234'},
+    { callerName:'조상준', courseName: '컴퓨터구조', id:'20011609',password:'password'},
    
   ]);
 
@@ -33,6 +47,31 @@ function RequestList() {
     });
   };
 
+  const handleSend = useCallback(
+    async (sender: string): Promise<void> => {
+      
+      
+            await callFunction(appId, 'sendAsBotTwo', {
+              input: {
+                groupId: chatId,
+                broadcast,
+                rootMessageId,
+                message: sender
+              },
+            })
+            
+    },
+    [
+      appId,
+      broadcast,
+      channelId,
+      chatId,
+      chatType,
+      managerId,
+      message,
+      rootMessageId,
+    ]
+  )
   
 
   return (
@@ -64,10 +103,10 @@ function RequestList() {
             />
             <Stack direction="horizontal" justify="end" spacing={10} align="center">
               <Button text="반사" colorVariant="red" size="m" 
-                onClick={()=>removeLecture(lecture.id)}
+                onClick={()=> {removeLecture(lecture.id); handleSend('반사');}}
                 />
               <Button text="완료" colorVariant="blue" size="m" 
-                onClick={()=>removeLecture(lecture.id)}
+                onClick={()=>{removeLecture(lecture.id); handleSend('완료');}}
                 />
             </Stack>
           </Stack>

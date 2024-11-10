@@ -66,6 +66,9 @@ export const getMyLectureList = async (
     });
 
     return lectures;
+  }catch (error) {
+    console.error(error);
+    throw new Error('query error');
   }
 }
 
@@ -85,6 +88,58 @@ export const getUsersInSameCourse = async (
   } catch (error) {
     console.error(error);
     throw new Error('query error');
+  }
+};
+
+// Profile 테이블에 학생 정보를 저장
+export const createProfile = async (
+  callerId: string,
+  studentName: string,
+  studentId: string,
+  studentPw: string
+): Promise<void> => {
+
+  console.log(studentName);
+  console.log(studentId);
+  console.log(studentPw);
+  
+  const conn = await connection;
+  try {
+    await conn.beginTransaction();
+
+    // Lecture 테이블에 데이터 삽입
+    const [profileResult] = await conn.query<ResultSetHeader>(
+      'INSERT INTO Profile (caller_id, student_name, student_id, student_pw) VALUES (?, ?, ?, ?)',
+      [callerId, studentName, studentId,studentPw]
+    );
+    await conn.commit();
+    console.log('New Profile created successfully');
+  } catch (error) {
+    await conn.rollback();
+    console.error('Error creating new Profile:', error);
+    throw error;
+  }
+};
+
+export const getCallerName = async (callerId: string): Promise<string> => {
+  const conn = await connection;
+
+  try {
+    const [rows] = await conn.query<RowDataPacket[]>(
+      'SELECT student_name FROM Profile WHERE caller_id = ?',
+      [callerId]
+    );
+    // 쿼리 결과에서 첫 번째 행의 student_name 필드를 추출하여 반환
+    if (rows.length > 0) {
+      const a = rows[0].student_name as string; // student_name 필드를 string으로 반환
+      console.log(a);
+      return a;
+    } else {
+      throw new Error('No matching caller_id found');
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error('Query error');
   }
 };
 
