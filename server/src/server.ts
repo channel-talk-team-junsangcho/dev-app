@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
-import { requestIssueToken, registerCommand, saveLecture , tutorial, verification } from './util';
 
+import { requestIssueToken, registerCommand,getNameByNativeFunction, getChannelToken, sendAsBotTwo,saveLecture ,saveProfilePage,saveProfile, viewLectureList, tutorial, verification, sendAsBot, findRandomMember, viewRequestLectureList } from './util';
 
 require("dotenv").config();
 
@@ -24,11 +24,60 @@ async function functionHandler(body: any) {
             return tutorial(WAM_NAME, callerId, body.params);
         case 'saveLecture':
             await saveLecture(
+                callerId,
                 body.params.input.courseName,
                 body.params.input.courseNumber,
                 body.params.input.classNumber
             );
             return ({result: {}});
+         // WAM으로 보내는거
+         case 'saveProfilePage':
+            return saveProfilePage(WAM_NAME, callerId, body.params);
+
+        // WAM에서 호출하는거
+        case 'saveProfile' :
+            // const name = "채우기"
+            const returnValues = await getChannelToken(channelId);
+            const channelToken = returnValues[0];
+            const studentName = await getNameByNativeFunction(channelToken, channelId, callerId);
+            console.log("getnamebynativefunction : ", name);
+
+            await saveProfile(
+                callerId,
+                studentName,
+                body.params.input.studentId,
+                body.params.input.studentPw
+            );
+            return ({result: {}});
+
+        case 'sendAsBot':
+            await sendAsBot(
+                channelId,
+                body.params.input.groupId,
+                body.params.input.broadcast,
+                body.params.input.name,
+                body.params.input.courseName,
+                body.params.input.rootMessageId
+            );
+            return ({result: {}});
+        case 'sendAsBotTwo':
+                await sendAsBotTwo(
+                    channelId,
+                    body.params.input.groupId,
+                    body.params.input.broadcast,
+                    body.params.input.message,
+                    callerId,
+                    body.params.input.rootMessageId
+                );
+                return ({result: {}});
+        case 'viewLectureList':
+            return viewLectureList(WAM_NAME, callerId, body.params);
+
+        case 'viewRequestLectureList':
+            return viewRequestLectureList(WAM_NAME, callerId, body.params);
+        
+        case 'findRandomMember':
+            await findRandomMember(callerId, channelId, body.params.input.groupId, body.params.input.broadcast, body.params.input.courseName, body.params.input.rootMessageId)
     }
 }
 

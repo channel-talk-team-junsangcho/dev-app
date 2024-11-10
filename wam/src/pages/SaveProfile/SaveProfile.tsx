@@ -12,7 +12,6 @@ import {
   ModalFooter,
   ButtonGroup,
   ModalClose,
-  Box,
   // ButtonGroup,
   // Checkbox,
   TextField,
@@ -21,32 +20,26 @@ import { CancelIcon, SendIcon } from '@channel.io/bezier-icons'
 
 import {
   callFunction,
-  // callNativeFunction,
   close,
   getWamData,
   setSize,
 } from '../../utils/wam'
-import * as Styled from './Send.styled'
+import * as Styled from './SaveProfile.styled'
 
-function Send() {
+function SaveProfile() {
   useEffect(() => { //화면사이즈 설정
     setSize(390, 300) 
   }, [])
 
-  const [courseName, setCourseName] = useState<string>('');
-  const [courseNumber, setCourseNumber] = useState<string>('');
-  const [classNumber, setClassNumber] = useState<string>('');
-  
-  const handleCourseNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCourseName(event.target.value);
+  const [studentId, setStudentId] = useState<string>('');
+  const [studentPw, setStudentPW] = useState<string>('');
+
+  const handleStudentIdChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStudentId(event.target.value);
   };
 
-  const handleCourseNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCourseNumber(event.target.value);
-  };
-
-  const handleClassNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setClassNumber(event.target.value);
+  const handleStudentPwChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setStudentPW(event.target.value);
   };
 
   const chatTitle = useMemo(() => getWamData('chatTitle') ?? '', [])
@@ -62,16 +55,15 @@ function Send() {
 
   const handleSave = useCallback(
       async (): Promise<void> => {
-        console.log(courseName, courseNumber, classNumber);
+        console.log(studentId, studentPw);
         
-        await callFunction(appId, 'saveLecture', {
+        await callFunction(appId, 'saveProfile', {
           input: {
             groupId: chatId,
             broadcast,
             rootMessageId,
-            courseName: courseName,
-            courseNumber: courseNumber,
-            classNumber: classNumber
+            studentId: studentId,
+            studentPw: studentPw
           }
         })
       },
@@ -84,9 +76,8 @@ function Send() {
         managerId,
         message,
         rootMessageId,
-        courseName,
-        courseNumber,
-        classNumber
+        studentId,
+        studentPw
       ]
     )
 
@@ -98,7 +89,7 @@ function Send() {
           typo="24"
           bold
         >
-          강의를 등록하세요!
+          학생 정보를 입력하세요!
         </Text>
         <Button
           colorVariant="monochrome-dark"
@@ -107,31 +98,16 @@ function Send() {
           onClick={() => close()}
         />
       </HStack>
-        <HStack justify="start">
-      <Box>
-        <Text
-          color="txt-black-darkest"
-          typo="15"
-        >
-          수강 강의 정보를 등록해주세요!
-        </Text>
-      </Box>
-      </HStack>
       <HStack justify="center">
         <TextField
-          placeholder="강의명"
-          value={courseName}
-          onChange={handleCourseNameChange}
+          placeholder="학번"
+          value={studentId}
+          onChange={handleStudentIdChange}
         />
         <TextField
-          placeholder="학수번호"
-          value={courseNumber}
-          onChange={handleCourseNumberChange}
-        />
-        <TextField
-          placeholder="반 번호"
-          value={classNumber}
-          onChange={handleClassNumberChange}
+          placeholder="비번"
+          value={studentPw}
+          onChange={handleStudentPwChange}
         />
       </HStack>
       <HStack justify="center">
@@ -144,7 +120,7 @@ function Send() {
         </ModalTrigger>
         <ModalContent>
             <ModalHeader
-              subtitle="강의 등록하기"
+              subtitle="학생 정보 등록하기"
               title="저장하시겠습니까?"
               titleSize="l"
             />
@@ -175,4 +151,4 @@ function Send() {
   )
 }
 
-export default Send
+export default SaveProfile
